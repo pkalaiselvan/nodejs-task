@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Home</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+	</script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="./css/main.css">
+	<script type="text/javascript">
+		function setCookie(c_name, value, exdays) {
+			var exdate = new Date();
+			exdate.setDate(exdate.getDate() + exdays);
+			var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+			document.cookie = c_name + "=" + c_value;
+		}
+
+		function getCookie(c_name) {
+			var i, x, y, ARRcookies = document.cookie.split(";");
+			for (i = 0; i < ARRcookies.length; i++) {
+				x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+				y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+				x = x.replace(/^\s+|\s+$/g, "");
+				if (x == c_name) {
+					return unescape(y);
+				}
+			}
+		}
+
+		function delete_user(id) {
+			console.log(id)
+			$.ajax({
+				type: 'DELETE',
+				url: '/user',
+				headers: { 'token': getCookie('token') },
+				data: {id: id},
+				dataType: "json",
+				success: function(response){
+					if (!response.status) {
+						location.reload()
+					} else {
+						alert(response['txt']);
+					}
+				},
+				error: function() {
+				}
+			})
+		}
+		let token = getCookie('token');
+		if(!token) { location.href = location.origin + '/login' }
+		//  else {
+		// 	$.ajax({
+		// 		type: 'GET',
+		// 		url: '/verify',
+		// 		headers: { 'token': getCookie('token') },
+		// 		success: function(response, textStatus, request){
+		// 			console.log(response)
+		// 			if (response.status == 0) {
+		// 				// alert(request.getResponseHeader('set-token'));
+		// 			} else {
+		// 				location.href = location.origin + '/login'
+		// 			}
+		// 		},
+		// 		error: function() {
+		// 		}
+		// 	})
+		// }
+	</script>
+</head>
+
+<body>
+	<div class="col-md-4 col-md-offset-4">
+		<div>
+			<a href="/user">Add User</a>
+		</div>
+		<div>
+			<p>Users Details</p>
+		</div>
+		<div>
+			<center>
+				<table class="table table-hover text-center">
+					<tr>
+						<td>Name</td>
+						<td>Phone Number</td>
+						<td>Address</td>
+						<td>State</td>
+						<td>City</td>
+						<td>Action</td>
+					</tr>
+					<% for(var i=0; i < data.length; i++) { %>
+						<tr>
+							<td>
+								<%= data[i].Name %>
+							</td>
+							<td>
+								<%= data[i].Phone_Number %>
+							</td>
+							<td>
+								<%= data[i].Address %>
+							</td>
+							<td>
+								<%= data[i].State %>
+							</td>
+							<td>
+								<%= data[i].City %>
+							</td>
+							<td>
+								<button><a href="/user?id=<%= data[i]._id %>"> Edit </a></button> 
+								<button class="ml-1" onclick="delete_user(`<%= data[i]._id %>`)"> Delete</button> 
+							</td>
+						</tr>
+						<% } %>
+				</table>
+			</center>
+		</div>
+	</div>
+</body>
+
+</html>

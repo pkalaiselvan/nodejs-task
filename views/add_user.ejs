@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Add /Update User</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+	</script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="./css/main.css">
+
+	<script type="text/javascript">
+
+		function setCookie(c_name, value, exdays) {
+			var exdate = new Date();
+			exdate.setDate(exdate.getDate() + exdays);
+			var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+			document.cookie = c_name + "=" + c_value;
+		}
+
+		function getCookie(c_name) {
+			var i, x, y, ARRcookies = document.cookie.split(";");
+			for (i = 0; i < ARRcookies.length; i++) {
+				x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+				y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+				x = x.replace(/^\s+|\s+$/g, "");
+				if (x == c_name) {
+					return unescape(y);
+				}
+			}
+		}
+
+		$(document).ready(function(){
+
+			$( "#form2" ).submit(function(event) {
+				const urlParams = new URLSearchParams(window.location.search);
+				const id = urlParams.get('id');
+				let url = '/user';
+				id ? url += '?id=' + id : '';
+				event.preventDefault();
+
+				$.ajax({
+					type: 'POST',
+					url: url,
+					headers: { 'token': getCookie('token') },
+					data: $('#form2').serialize(),
+					dataType: "json",
+					success: function(response){
+						$('#form2')[0].reset();
+						if (!response.status) {
+							document.getElementById("aa").click();
+						} else {
+							alert(response['txt']);
+						}
+					},
+					error: function() {
+					}
+				})
+				
+			});
+
+		});
+	</script>
+</head>
+<body>
+
+		<div class="col-md-4 col-md-offset-4">
+			<div>
+				<p>Add / Update User</p>
+			</div>
+			<div class="form-group">
+				<form id="form2" method="post">
+					<input type="text" value="<%= Name %>" name="Name" placeholder="Name" required="" class="form-control"><br/>
+					<input type="number" value="<%= Phone_Number %>" name="Phone_Number" placeholder="Phone Number" required="" class="form-control"><br/>
+					<input type="text" value="<%= Address %>" name="Address" placeholder="Address" required="" class="form-control"><br/>
+					<input type="text" value="<%= State %>" name="State" placeholder="State" required="" class="form-control"><br/>
+					<input type="text" value="<%= City %>" name="City" placeholder="City" required="" class="form-control"><br/>
+					<input type="submit" value="Submit" class="btn btn-success">
+				</form>
+			</div>
+			<div  class="mssg bg-danger">
+				<div id="LangTable"><a href="/home" id="aa"></a>
+				</div>
+			</div>
+			</div>
+		</div>
+
+</body>
+</html>
